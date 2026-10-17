@@ -13,7 +13,7 @@ function send(text){if(busy)return;bubble(text,true);ask({message:text,state});}
 document.querySelector('#compose').onsubmit=event=>{event.preventDefault();const text=input.value.trim();if(!text||busy)return;input.value='';send(text);};
 document.querySelectorAll('[data-topic]').forEach(button=>button.onclick=()=>ask({topic:button.dataset.topic}));
 const toggle=document.querySelector('#theme-toggle');
-function theme(dark){document.documentElement.classList.toggle('dark',dark);toggle.textContent=dark?'☀':'☾';toggle.setAttribute('aria-label',dark?'Ativar modo claro':'Ativar modo escuro');toggle.setAttribute('aria-pressed',String(dark));}
+function theme(dark){document.documentElement.classList.toggle('dark',dark);toggle.innerHTML=dark?'<svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/></svg>':'<svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 13A9 9 0 0 1 11 3.2 9 9 0 1 0 20.8 13Z"/></svg>';toggle.setAttribute('aria-label',dark?'Ativar modo claro':'Ativar modo escuro');toggle.setAttribute('aria-pressed',String(dark));}
 let saved;try{saved=localStorage.getItem('boring-public-theme');}catch(e){}
 theme(saved?saved==='dark':matchMedia('(prefers-color-scheme: dark)').matches);
 toggle.onclick=()=>{const dark=!document.documentElement.classList.contains('dark');theme(dark);try{localStorage.setItem('boring-public-theme',dark?'dark':'light');}catch(e){}};
