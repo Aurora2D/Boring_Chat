@@ -31,22 +31,19 @@ export async function onRequest({ request }) {
   } catch { return json({ error: 'Solicitação inválida.' }, 400); }
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 9000);
-  let diagnostic = "network";
   try {
     const response = await fetch(UPSTREAM, {
       method: 'POST', redirect: 'manual', signal: controller.signal,
       headers: { 'Content-Type': 'application/json', 'Origin': 'https://boring-chat.pages.dev' },
       body: JSON.stringify(body),
     });
-    diagnostic = "http_" + response.status;
     if (![200, 400, 413, 415, 429].includes(response.status)) throw new Error('Tutor unavailable');
-    diagnostic += "_json";
     const value = await response.json();
     if (response.ok) {
       if (typeof value.text !== 'string' || !Array.isArray(value.choices) || !value.choices.every(s => typeof s === 'string')) throw new Error('Invalid tutor response');
       return json({ text: value.text, choices: value.choices, state: value.state ?? null });
     }
     return json({ error: typeof value.error === 'string' ? value.error : 'Não foi possível responder.' }, response.status);
-  } catch (error) { const response = json({ error: 'O tutor está indisponível. Tente novamente em instantes.' }, 502); response.headers.set('X-Tutor-Diagnostic', diagnostic + '_' + error.name); response.headers.set('X-Tutor-Diagnostic-Detail', String(error.message).slice(0,220).replace(/[^\x20-\x7e]/g,'')); return response; }
+  } catch { return json({ error: 'O tutor está indisponível. Tente novamente em instantes.' }, 502); }
   finally { clearTimeout(timer); }
 }
