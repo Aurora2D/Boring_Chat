@@ -34,7 +34,7 @@ export async function onRequest({ request }) {
   let diagnostic = "network";
   try {
     const response = await fetch(UPSTREAM, {
-      method: 'POST', redirect: 'error', signal: controller.signal,
+      method: 'POST', redirect: 'manual', signal: controller.signal,
       headers: { 'Content-Type': 'application/json', 'Origin': 'https://boring-chat.pages.dev' },
       body: JSON.stringify(body),
     });
@@ -47,6 +47,6 @@ export async function onRequest({ request }) {
       return json({ text: value.text, choices: value.choices, state: value.state ?? null });
     }
     return json({ error: typeof value.error === 'string' ? value.error : 'Não foi possível responder.' }, response.status);
-  } catch (error) { const response = json({ error: 'O tutor está indisponível. Tente novamente em instantes.' }, 502); response.headers.set('X-Tutor-Diagnostic', diagnostic + '_' + error.name); return response; }
+  } catch (error) { const response = json({ error: 'O tutor está indisponível. Tente novamente em instantes.' }, 502); response.headers.set('X-Tutor-Diagnostic', diagnostic + '_' + error.name); response.headers.set('X-Tutor-Diagnostic-Detail', String(error.message).slice(0,220).replace(/[^\x20-\x7e]/g,'')); return response; }
   finally { clearTimeout(timer); }
 }
