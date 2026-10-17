@@ -1,5 +1,5 @@
 // The browser stays on Pages. Only this fixed public tutor endpoint is contacted.
-const UPSTREAM = 'https://aurora2d.tail8abf1e.ts.net:10000/api/tutor/message';
+const UPSTREAM = 'https://aurora2d.tail8abf1e.ts.net/english-tutor';
 const MAX_BYTES = 16384;
 function json(value, status = 200) {
   return new Response(JSON.stringify(value), { status, headers: {
